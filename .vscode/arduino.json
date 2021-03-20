@@ -1,0 +1,5 @@
+{
+    "sketch": "gameFile.ino",
+    "programmer": "AVR ISP",
+    "board": "arduino:avr:uno"
+}

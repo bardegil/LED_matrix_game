@@ -1,4 +1,5 @@
 #include "LedControl.h"
+#include "button_response.h"
 
 /*Things thst needs to be worked on!
  * 
@@ -8,9 +9,10 @@
  * All known bugs are taken care of
  * Missing interrups for button press
  */
+void greenButton();
 
 LedControl lc=LedControl(12,10,11,4);  // Pins: DIN,CLK,CS, # of Display connected
-
+button_response my_green_btn(3,greenButton);
 /*
  * Variables
  */
@@ -42,6 +44,8 @@ byte frame[] = { B00000000,
  * nextFrame - Animation function
  * greenButton - Game mechanic. What happens when the green button is pressed
  */
+
+
 
 void nextFrame(){
   if(newLevel){

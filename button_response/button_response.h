@@ -1,6 +1,6 @@
 // Include Arduino FreeRTOS library
 #include <Arduino_FreeRTOS.h>
-
+#include <Arduino.h>
 // Include semaphore supoport
 #include <semphr.h>
 typedef void (* interrupt_response_function_t)();
@@ -12,10 +12,9 @@ private:
   interrupt_response_function_t callback;
   /* data */
 public:
-  button_response(/* args */);
-  ~button_response();
-  TaskLed(void * pvArgs);
-  interruptHandler();
+    button_response(int button_pin,interrupt_response_function_t callback_function);
+    ~button_response();
+    void TaskLed();
+     void interruptHandler();
 };
 
-/* 

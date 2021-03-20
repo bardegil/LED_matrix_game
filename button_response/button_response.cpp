@@ -9,30 +9,30 @@
  * 
  */
 #include "button_response.h"
-#include <cstdio>
 
 
-
+static void taskfun(void* parm);
+static void my_interruptfun();
 
 button_response::button_response(int button_pin,interrupt_response_function_t callback_function)
 {
-  char buf[20]
+  char buf[20];
   sprintf(buf,"led_%d_task",button_pin);
   pinMode(button_pin, INPUT_PULLUP);
    // Create task for Arduino led 
   btn_sem = xSemaphoreCreateBinary();
-  if (interruptSemaphore != NULL) {
+  if (btn_sem != NULL) {
     // Attach interrupt for Arduino digital pin
-    attachInterrupt(digitalPinToInterrupt(button_pin), interruptHandler, LOW);
+    attachInterrupt(digitalPinToInterrupt(button_pin), my_interruptfun, LOW);
   }
   callback = callback_function;
   configASSERT(callback != NULL);
-  task = xTaskCreate(TaskLed, // Task function
+  xTaskCreate(taskfun, // Task function
               buf, // Task name
               128, // Stack size 
               NULL, 
               4, // Priority
-              NULL );
+              &task );
   configASSERT(task != NULL);  
 }
 
@@ -41,6 +41,14 @@ button_response::~button_response()
   vTaskDelete(task);
 }
 
+static void taskfun(void* parm) {
+    static_cast<button_response *>(parm)->TaskLed();
+}
+
+static void my_interruptfun() {
+    void* parm;
+    static_cast<button_response *>(parm)->interruptHandler();
+}
 
 
 void button_response::interruptHandler() {
@@ -60,9 +68,9 @@ void button_response::interruptHandler() {
 /* 
  * Led task. 
  */
-void button_response::TaskLed(void *pvParameters)
+void button_response::TaskLed()
 {
-  (void) pvParameters;
+  //(void) pvParameters;
 
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -72,7 +80,7 @@ void button_response::TaskLed(void *pvParameters)
      * Take the semaphore.
      * https://www.freertos.org/a00122.html
      */
-    if (xSemaphoreTake(interruptSemaphore, portMAX_DELAY) == pdPASS) {
+    if (xSemaphoreTake(btn_sem, portMAX_DELAY) == pdPASS) {
       callback();
     }
     vTaskDelay(10);
