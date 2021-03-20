@@ -11,19 +11,6 @@
 #include "button_response.h"
 #include <cstdio>
 
-class button_response
-{
-private:
-  TaskHandle_t task;
-  SemaphoreHandle_t btn_sem;
-  interrupt_response_function_t callback;
-  /* data */
-public:
-  button_response(/* args */);
-  ~button_response();
-  TaskLed(void * pvArgs);
-  interruptHandler();
-};
 
 
 
