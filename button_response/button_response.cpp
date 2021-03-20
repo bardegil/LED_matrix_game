@@ -50,8 +50,8 @@ button_response::button_response(int button_pin,interrupt_response_function_t ca
 }
 
 button_response::~button_response()
-vTaskDelete()
 {
+  vTaskDelete(task);
 }
 
 
